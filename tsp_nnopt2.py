@@ -76,9 +76,8 @@ def createGraph(data):
     # Graph will be represented by an adjacency list
     graph = {}
     distanceTable = [[0 for i in range(len(data))]for j in range(len(data))]
-    start_time = time.clock()
-    # Create an adjacency list like
-    # {City1: {neighbor1: distance, neighbor2: distance} 
+    # Create an adjacency list
+    # {City1: {neighbor1: distance, neighbor2: distance...}...} 
 
     # Iterate over each location
     for source, xCoordinate, yCoordinate in data:
@@ -91,20 +90,15 @@ def createGraph(data):
 
             # Don't calculate the distance from one location to the same location
             if dest != currentSource:
-               # print "distanceTable[%d][%d]" % (source, dest)
                 if distanceTable[source][dest] > 0:
                     distance = distanceTable[source][dest]
-                   # print "Looked up distanceTable[%d][%d] = %d" % (source, dest, distance)
                 else:
                     distance = calculateDistance(currentX, destX, currentY, destY)
                     distanceTable[source][dest] = distance
                     distanceTable[dest][source] = distance
                 neighbors.update({dest: distance})
                 graph[currentSource] = neighbors
-                   # testValue = distanceTable[source][dest]
-                   # reverseTest = distanceTable[dest][source]
-                   # print "distanceTable[%d][%d] = %d" % (source, dest, testValue)
-                   # print "distanceTable[%d][%d] = %d" % (dest, source, reverseTest)
+
     return graph
 
 # This function returns the euclidean distance between two points given x and y coordinates
@@ -121,28 +115,18 @@ def nearestNeighbor(graph):
     cities = graph.keys()
     citiesVisited = 0
     currentCity = 0
-    
     order = [0]
 
     while(citiesVisited < len(cities)): 
-       # print "Current city is: %d" % (currentCity)
-        
         minDistance = sorted(graph[currentCity], key=graph[currentCity].get)
-       # print "minDistance from %d: %s" % (currentCity, minDistance)
-        
         for city in minDistance:
-           # print "Checking %d" % (city)
             if city in order:
-               # print "%d is in minDistance" % (city)
                 continue
             else:
-               # print "%d has not been visited, adding to tour" % (city)
                 nearest = city
                 order.append(nearest)
                 break
-       # print "Order is now %s" % (order)
         citiesVisited += 1
-       # print "citiesVisited: %d" % (citiesVisited)
         currentCity = nearest
         
     order.append(order[0])
@@ -198,15 +182,11 @@ def createNewTour(tour, graph,filename,time_limit):
             #if time limit has been reached end loop
             if time.time() > time_limit:
                 break
-            #print("1")
             #create a new tour and get its distance
             newTour = twoOptSwap(tour, m, n)
             newDistance = totalLength(newTour, graph)
-            #print(newDistance)
-            #print(bestDistance)
             # If the new distance is better than best distance, assign tour to the new improved tour
             if(newDistance < bestDistance):
-                #print("2")
                 tour = newTour
                 writeOutput(newDistance, tour, filename)
                 return True, tour
