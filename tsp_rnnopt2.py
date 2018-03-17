@@ -8,8 +8,8 @@ import time
 def main(argv):
     #start counting time
     start_time = time.time()
-    #time limit is current time +  minutes
-    time_limit = time.time() + 600
+    #time limit is current time + 100 minutes
+    time_limit = time.time() + 6000
     
     # Get the file name from the command line argument
     filename = os.path.splitext(sys.argv[-1])[0]
@@ -19,9 +19,9 @@ def main(argv):
     
     graph = createGraph(data)
     
-    walk = nearestNeighbor(graph)
+    walk,distance = repetativeNearestNeighbor(graph)
     
-    distance = totalLength(walk, graph)
+    
     print("Before 2 opt")
     print(walk)
     print(distance)
@@ -132,6 +132,40 @@ def nearestNeighbor(graph):
     order.append(order[0])
     return order
 
+def repetativeNearestNeighbor(graph):
+    cities = graph.keys()
+    citiesVisited = 0
+    bestDistance = float('inf')
+    bestOrder = []
+    
+    # tour each city
+    for i in range(len(cities)):
+        citiesVisited = 0
+        order = [i]
+        currentCity = i
+        
+        while(citiesVisited < len(cities)): 
+            # sort neighbors of currentCity by shortest distance
+            minDistance = sorted(graph[currentCity], key=graph[currentCity].get)
+            
+            for city in minDistance:
+                # if city has been visited, exclude it, else add it to the tour
+                if city in order:
+                    continue
+                else:
+                    nearest = city
+                    order.append(nearest)
+                    break
+            citiesVisited += 1
+            currentCity = nearest
+        order.append(order[0])
+        
+        tourLength = totalLength(order, graph)
+        # if this tour is shorter than the best tour so far, it is the new best tour
+        if tourLength < bestDistance:
+            bestDistance = tourLength
+            bestOrder = order
+    return bestOrder, bestDistance
 # calculate tour length
 def totalLength(walk, graph):
     totalDistance = 0
